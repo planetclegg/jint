@@ -1,4 +1,4 @@
-# A forked Jint Intepreter for .NET: an experiment to create a version of javascript that uses decimal types for numerics instead of; IEEE doubles.  
+# A forked Jint Intepreter for .NET: an experiment to create a version of javascript that uses decimal types for numerics instead of IEEE doubles.  
 
 ### *"It's not just forked, it's fscked."*
 

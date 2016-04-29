@@ -11,7 +11,9 @@ So I wanted to see if I could create an embeddable language that would use decim
 How come all math expression libs seem to assume you want doubles (either exclusively or by default), and don't allow for easy override to force the use of decimals?!?  Seems like an oversight....
 
 ##Why *NOT* to do this?
-It's a bit broken version of JS.  Its nowhere near spec for JS.   I haven't bothered to see how many tests fail.   *Some* transcendental functions (sin, cos,  etc) still sorta work, but return slightly different values (due to me taking the shortcut of converting from decimals to doubles and back).   Worse, since C# decimals don't have a notion of NaN, PositiveInfinity, NegativeInfinity, or positive vs negative zero (not sure?), various transcendental functions are broken for lots of values.   Scientific notation probably doesn't work right either, i didn't really fully explore that.   Really, most of the transcendental functions should be ripped out, and for financial calculations they aren't necessary anyway.
+It's a bit broken version of JS.  Its nowhere near spec for JS.   I haven't bothered to see how many tests fail.   *Some* transcendental functions (sin, cos,  etc) still sorta work, but return slightly different values (due to me taking the shortcut of converting from decimals to doubles and back).   Worse, since C# decimals don't have a notion of NaN, PositiveInfinity, NegativeInfinity, or positive vs negative zero (not sure?), various transcendental functions are broken for lots of values.   Scientific notation probably doesn't work right either, i didn't really fully explore that.   Really, most of the transcendental functions should be ripped out, and for financial calculations they aren't necessary anyway.  I probably screwed up date functions in the process.
+
+Date functions are horribly broken due to math overflows, which I didn't expect.  This has broken almost all the unit tests
 
 However, standard arithmetic functions (+,-,*,/) for financial calculations should operate as expected for *decimal* types (no rounding nastyness).
 
@@ -25,9 +27,10 @@ After about 4 hours of hacking at it, I created a frankenstein monster.  Left to
 
 ##Todo  (if I were to continue to persue this, which I probably won't)
 - Get rid of all the Transcendental funcitions in Math that are broken
+- figure out why the date calculations are overflowing, I think I've traced that to YearFromTime(), which works in an odd way
 - Fix any remaining bugs (Particularly, conversions to and from string are kludged right now and probably dubious for some edge cases)
 - eliminate all the NaN special handling and migrate from the Money wrapper directly to decimal
-- Fix Unit tests (oh the humanity!  I'm afraid to look)
+- Fix Unit tests (oh the humanity!), or removes ones that no longer apply. Almost all fail now due to a date function problem.
 - Call it something other than Javascript
 - Kill it with fire, mercifully
 

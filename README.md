@@ -1,156 +1,52 @@
-[![Build status](http://teamcity.codebetter.com/app/rest/builds/buildType:(id:Jint_Master)/statusIcon)](http://teamcity.codebetter.com/project.html?projectId=Jint&tab=projectOverview)
+# A forked Jint Intepreter for .NET: an experiment to create a version of javascript that uses decimal types for numerics instead of; IEEE doubles.  
 
-# Jint
+### *"It's not just forked, it's fscked."*
 
-Jint is a __Javascript interpreter__ for .NET which provides full __ECMA 5.1__ compliance and can run on __any .NET plaftform__. Because it doesn't generate any .NET bytecode nor use the DLR it runs relatively small scripts faster. It's available as a PCL on Nuget at https://www.nuget.org/packages/Jint.
+## Why do this?
+Because sometimes you need to do financial calculations, and having an embeddable language for doing so is useful.   IEEE floating point (floats/doubles) suffers from annoying rounding issues when doing monetary calculations; just open up node or the base jint and type "0.1 + 0.2" and see what you get as a result (Something like 0.30000000000000004 , because both numbers are infinitely repeating in binary representation).   Various workarounds for these rounding issues lead to difficult to maintain code and/or a source for constant and subtle bug reports.
 
-# Features
+So I wanted to see if I could create an embeddable language that would use decimals **_by default_** instead, so that e.g. 0.1+0.2==0.3.   This was an experiment in doing it with a javascript interpreter, using jint
 
-- Full support for ECMAScript 5.1 - http://www.ecma-international.org/ecma-262/5.1/
-- .NET Portable Class Library - http://msdn.microsoft.com/en-us/library/gg597391(v=vs.110).aspx
-- .NET Interoperability 
+##[Rant #1]
+How come all math expression libs seem to assume you want doubles (either exclusively or by default), and don't allow for easy override to force the use of decimals?!?  Seems like an oversight....
 
-# Discussion
+##Why *NOT* to do this?
+It's a bit broken version of JS.  Its nowhere near spec for JS.   I haven't bothered to see how many tests fail.   *Some* transcendental functions (sin, cos,  etc) still sorta work, but return slightly different values (due to me taking the shortcut of converting from decimals to doubles and back).   Worse, since C# decimals don't have a notion of NaN, PositiveInfinity, NegativeInfinity, or positive vs negative zero (not sure?), various transcendental functions are broken for lots of values.   Scientific notation probably doesn't work right either, i didn't really fully explore that.   Really, most of the transcendental functions should be ripped out, and for financial calculations they aren't necessary anyway.
 
-[![Join the chat at https://gitter.im/sebastienros/jint](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sebastienros/jint)
+However, standard arithmetic functions (+,-,*,/) for financial calculations should operate as expected for *decimal* types (no rounding nastyness).
 
-Or post your questions with the `jint` tag on [stackoverflow](http://stackoverflow.com/questions/tagged/jint).
+Of course decimal calculations are a bit slower than floats, since IEEE floating point calculations are built into your FPU, decimals require explict algorithms implement.  Not something you'd want to write a video game with.
 
-# Examples
+##How?
+I took some shortcuts to port his quickly.  I created a "Money" struct to wrap a nullable decimal.   null is used internally to represent NaN.  I mainly did that to minimize the amount of code I needed to change, rather than for correctness.   The Money class also offers replacements for some things in System.Math that would operate on this new type.  You'll note some functions in there relating to Infinity that are again done for expediency, and are essentially incorrect.
 
-This example defines a new value named `log` pointing to `Console.WriteLine`, then executes 
-a script calling `log('Hello World!')`. 
-```c#
-    var engine = new Engine()
-        .SetValue("log", new Action<object>(Console.WriteLine))
-        ;
-    
-    engine.Execute(@"
-      function hello() { 
-        log('Hello World');
-      };
-      
-      hello();
-    ");
-```
-Here, the variable `x` is set to `3` and `x * x` is executed in JavaScript. The result is returned to .NET directly, in this case as a `double` value `9`. 
-```c#
-    var square = new Engine()
-        .SetValue("x", 3) // define a new variable
-        .Execute("x * x") // execute a statement
-        .GetCompletionValue() // get the latest statement completion value
-        .ToObject() // converts the value to .NET
-        ;
-```
-You can also directly pass POCOs or anonymous objects and use them from JavaScript. In this example for instance a new `Person` instance is manipulated from JavaScript. 
-```c#
-    var p = new Person {
-        Name = "Mickey Mouse"
-    };
+## *Outcome of this experiment*
+After about 4 hours of hacking at it, I created a frankenstein monster.  Left to it's own devices it may kill its creator.   I decided this was too heavyweight of a change to maintain and spec out, so for my purposes I mothballed this attempt and created a completely custom simplified language interpreter more suited to my purposes.
 
-    var engine = new Engine()
-        .SetValue("p", p)
-        .Execute("p.Name === 'Mickey Mouse'")
-        ;
-```
-You can invoke JavaScript function reference
-```c#
-    var add = new Engine()
-        .Execute("function add(a, b) { return a + b; }")
-        .GetValue("add")
-        ;
+##Todo  (if I were to continue to persue this, which I probably won't)
+- Get rid of all the Transcendental funcitions in Math that are broken
+- Fix any remaining bugs (Particularly, conversions to and from string are kludged right now and probably dubious for some edge cases)
+- eliminate all the NaN special handling and migrate from the Money wrapper directly to decimal
+- Fix Unit tests (oh the humanity!  I'm afraid to look)
+- Call it something other than Javascript
+- Kill it with fire, mercifully
 
-    add.Invoke(1, 2); // -> 3
-```
-or directly by name 
-```c#
-    var engine = new Engine()
-        .Execute("function add(a, b) { return a + b; }")
-        ;
 
-    engine.Invoke("add", 1, 2); // -> 3
-```
-## Accessing .NET assemblies and classes
+##Usage
+Don't even think about using this in a production environment as is.  No telling how much fail is in there.  This is just an experiment
 
-You can allow an engine to access any .NET class by configuring the engine instance like this:
-```c#
-    var engine = new Engine(cfg => cfg.AllowClr());
-```
-Then you have access to the `System` namespace as a global value. Here is how it's used in the context on the command line utility:
-```javascript
-    jint> var file = new System.IO.StreamWriter('log.txt');
-    jint> file.WriteLine('Hello World !');
-    jint> file.Dispose();
-```
-And even create shortcuts to common .NET methods
-```javascript
-    jint> var log = System.Console.WriteLine;
-    jint> log('Hello World !');
-    => "Hello World !"
-```
-When allowing the CLR, you can optionally pass custom assemblies to load types from. 
-```c#
-    var engine = new Engine(cfg => cfg
-        .AllowClr(typeof(Bar).Assembly)
-    );
-```
-and then to assign local namespaces the same way `System` does it for you, use `importNamespace`
-```javascript
-    jint> var Foo = importNamespace('Foo');
-    jint> var bar = new Foo.Bar();
-    jint> log(bar.ToString());
-```    
-Generic types are also supported. Here is how to declare, instantiate and use a `List<string>`:
-```javascript
-    jint> var ListOfString = System.Collections.Generic.List(System.String);
-    jint> var list = new ListOfString();
-    jint> list.Add('foo');
-    jint> list.Add(1); // automatically converted to String
-    jint> list.Count; // 2
-```
+##[Rant #2]
+Don't use floats or doubles for monetary calculations.  Ever.  Find an add-on library for your language that uses an internal decimal (rather than binary) representation if you have to.  Java: use BigDecimal, C#/VB.Net use decimal (primitive type, yay!).  Javascript: use Big.js or some equivalent, Python use decimal class,  etc.  Every decent language should have at least one, mature languages should ship with one.  
+Sidenote: This one of the things the Groovy language got right:  any number that has a dot in it (like 0.1) is by default a BigDecimal, floats and doubles have to be explictly declared (0.1f or 0.1d).
 
-## Internationalization
+An informal discussion of why floating point is bad for money calculations here: http://stackoverflow.com/questions/3730019/why-not-use-double-or-float-to-represent-currency/3730040#3730040
+More thorough explanation here: https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
 
-You can enforce what Time Zone or Culture the engine should use when locale JavaScript methods are used if you don't want to use the computer's default values.
+##Clarification
+The core issue with IEEE floating point for calculations involving cents isn't so much a rounding, its that numbers that are not infinitely repeating decimals ARE infinitely repeating binary numbers in IEEE representation.  Rounding just exposes this problem.  See the links above. e.g. 0.1 decimal == .000110011001100110011001100110011001100110011001100110011001... in binary.  See also http://www.exploringbinary.com/why-0-point-1-does-not-exist-in-floating-point/
 
-This example forces the Time Zone to Pacific Standard Time.
-```c#
-    var PST = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
-    var engine = new Engine(cfg => cfg.LocalTimeZone(PST));
-    
-    engine.Execute("new Date().toString()"); // Wed Dec 31 1969 16:00:00 GMT-08:00
-```
+##Contact
+Don't send me bug reports.  You really shouldn't be using this.  This is a proof of concept, nothing more.
 
-This example is using French as the default culture.
-```c#
-    var FR = CultureInfo.GetCultureInfo("fr-FR");
-    var engine = new Engine(cfg => cfg.Culture(FR));
-    
-    engine.Execute("new Number(1.23).toString()"); // 1.23
-    engine.Execute("new Number(1.23).toLocaleString()"); // 1,23
-```
 
-## Implemented features:
-
-- ECMAScript 5.1 test suite (http://test262.ecmascript.org/) 
-- Manipulate CLR objects from JavaScript, including:
-  - Single values
-  - Objects
-    - Properties
-    - Methods
-  - Delegates
-  - Anonymous objects
-- Convert JavaScript values to CLR objects
-  - Primitive values
-  - Object -> expando objects (`IDictionary<string, object>` and dynamic)
-  - Array -> object[]
-  - Date -> DateTime
-  - number -> double
-  - string -> string
-  - boolean -> bool
-  - Regex -> RegExp
-  - Function -> Delegate
-
-Continuous Integration kindly provided by  
-[![](http://www.jetbrains.com/img/banners/Codebetter300x250.png)](http://www.jetbrains.com/teamcity)
-
+For the standard jint docs docs, see https://github.com/sebastienros/jint

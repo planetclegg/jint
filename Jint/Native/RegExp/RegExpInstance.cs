@@ -26,7 +26,7 @@ namespace Jint.Native.RegExp
         public bool IgnoreCase { get; set; }
         public bool Multiline { get; set; }
 
-        public Match Match(string input, double start)
+        public Match Match(string input, Money start)
         {
             return Value.Match(input, (int) start);
         }

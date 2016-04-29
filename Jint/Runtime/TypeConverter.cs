@@ -70,7 +70,7 @@ namespace Jint.Runtime
             if (o.IsNumber())
             {
                 var n = o.AsNumber();
-                if (n.Equals(0) || double.IsNaN(n))
+                if (n.Equals(0) || Money.IsNaN(n))
                 {
                     return false;
                 }
@@ -101,7 +101,7 @@ namespace Jint.Runtime
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
-        public static double ToNumber(JsValue o)
+        public static Money ToNumber(JsValue o)
         {
             // check number first as this is what is usually expected
             if (o.IsNumber())
@@ -120,7 +120,7 @@ namespace Jint.Runtime
 
             if (o == Undefined.Instance)
             {
-                return double.NaN;
+                return Money.NaN;
             }
 
             if (o == Null.Instance)
@@ -142,15 +142,15 @@ namespace Jint.Runtime
                     return 0;
                 }
 
-                if ("+Infinity".Equals(s) || "Infinity".Equals(s))
-                {
-                    return double.PositiveInfinity;
-                }
-
-                if ("-Infinity".Equals(s))
-                {
-                    return double.NegativeInfinity;
-                }
+//                if ("+Infinity".Equals(s) || "Infinity".Equals(s))
+//                {
+//                    return double.PositiveInfinity;
+//                }
+//
+//                if ("-Infinity".Equals(s))
+//                {
+//                    return double.NegativeInfinity;
+//                }
 
                 // todo: use a common implementation with JavascriptParser
                 try
@@ -160,18 +160,20 @@ namespace Jint.Runtime
                         var start = s[0];
                         if (start != '+' && start != '-' && start != '.' && !char.IsDigit(start))
                         {
-                            return double.NaN;
+                            return Money.NaN;
                         }
 
-                        double n = Double.Parse(s,
+                        decimal n = decimal.Parse(s,
                             NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign |
                             NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite |
                             NumberStyles.AllowExponent, CultureInfo.InvariantCulture);
                         if (s.StartsWith("-") && n.Equals(0))
                         {
-                            return -0.0;
+							return (decimal)-0.0;
                         }
 
+
+						System.Diagnostics.Debug.WriteLine("got this : " + n);
                         return n;
                     }
 
@@ -181,11 +183,11 @@ namespace Jint.Runtime
                 }
                 catch (OverflowException)
                 {
-                    return s.StartsWith("-") ? double.NegativeInfinity : double.PositiveInfinity;
+					return Money.NaN;//s.StartsWith("-") ? double.NegativeInfinity : double.PositiveInfinity;
                 }
                 catch
                 {
-                    return double.NaN;
+					return Money.NaN;//double.NaN;
                 }
             }
 
@@ -197,16 +199,16 @@ namespace Jint.Runtime
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
-        public static double ToInteger(JsValue o)
+        public static Money ToInteger(JsValue o)
         {
             var number = ToNumber(o);
 
-            if (double.IsNaN(number))
+            if (Money.IsNaN(number))
             {
                 return 0;
             }
             
-            if (number.Equals(0) || double.IsInfinity(number))
+            if (number.Equals(0) || Money.IsInfinity(number))
             {
                 return number;
             }

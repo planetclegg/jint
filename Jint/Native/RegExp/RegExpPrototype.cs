@@ -88,7 +88,7 @@ namespace Jint.Native.RegExp
             Match r = null;
             if (i < 0 || i > length)
             {
-                R.Put("lastIndex", (double) 0, true);
+                R.Put("lastIndex", (Money) 0, true);
                 return Null.Instance;
             }
 
@@ -96,7 +96,7 @@ namespace Jint.Native.RegExp
 
             if (!r.Success)
             {
-                R.Put("lastIndex", (double) 0, true);
+                R.Put("lastIndex", (Money) 0, true);
                 return Null.Instance;
             }
 
@@ -104,7 +104,7 @@ namespace Jint.Native.RegExp
             
             if (global)
             {
-                R.Put("lastIndex", (double) e, true);
+                R.Put("lastIndex", (Money) e, true);
             }
             var n = r.Groups.Count;
             var matchIndex = r.Index;

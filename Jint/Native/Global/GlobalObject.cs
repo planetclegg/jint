@@ -46,8 +46,8 @@ namespace Jint.Native.Global
             FastAddProperty("TypeError", Engine.TypeError, true, false, true);
             FastAddProperty("URIError", Engine.UriError, true, false, true);
 
-            FastAddProperty("NaN", double.NaN, false, false, false);
-            FastAddProperty("Infinity", double.PositiveInfinity, false, false, false);
+            FastAddProperty("NaN", Money.NaN, false, false, false);
+//            FastAddProperty("Infinity", Money.PositiveInfinity, false, false, false);
             FastAddProperty("undefined", Undefined.Instance, false, false, false);
 
             // Global object functions
@@ -100,7 +100,7 @@ namespace Jint.Native.Global
             }
             else if (radix < 2 || radix > 36)
             {
-                return double.NaN;
+                return Money.NaN;
             }
             else if(radix != 16)
             {
@@ -118,7 +118,7 @@ namespace Jint.Native.Global
             }
             catch
             {
-                return double.NaN;
+                return Money.NaN;
             }
 
         }
@@ -127,10 +127,10 @@ namespace Jint.Native.Global
         {
             if (number == "")
             {
-                return double.NaN;
+                return Money.NaN;
             }
 
-            double result = 0;
+            double result = 0;  // FIXME
             double pow = 1;
             for (int i = number.Length - 1; i >= 0 ; i--)
             {
@@ -159,7 +159,7 @@ namespace Jint.Native.Global
                 pow = pow * radix;
             }
 
-            return result;
+			return (Money)(decimal)result;
         }
 
         /// <summary>
@@ -186,12 +186,12 @@ namespace Jint.Native.Global
 
             if (trimmedString.StartsWith("Infinity"))
             {
-                return sign*double.PositiveInfinity;
+				return Money.NaN; //return sign*double.PositiveInfinity;
             }
 
             if (trimmedString.StartsWith("NaN"))
             {
-                return double.NaN;
+                return Money.NaN;
             }
 
             var separator = (char) 0;
@@ -295,7 +295,7 @@ namespace Jint.Native.Global
 
             if (isNan)
             {
-                return double.NaN;
+                return Money.NaN;
             }
 
             for (var k = 1; k <= exp; k++)
@@ -310,7 +310,7 @@ namespace Jint.Native.Global
                 }
             }
             
-            return (double) (sign * number);
+			return (Money) (sign * number);
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ namespace Jint.Native.Global
         public static JsValue IsNaN(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return double.IsNaN(x);
+            return Money.IsNaN(x);
         }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace Jint.Native.Global
             }
 
             var n = TypeConverter.ToNumber(arguments.At(0));
-            if (double.IsNaN(n) || double.IsInfinity(n))
+            if (Money.IsNaN(n) || Money.IsInfinity(n))
             {
                 return false;
             }

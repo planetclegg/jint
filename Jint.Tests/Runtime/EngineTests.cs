@@ -822,8 +822,8 @@ namespace Jint.Tests.Runtime
         [Fact]
         public void ShouldComputeFractionInBase()
         {
-            Assert.Equal("011", NumberPrototype.ToFractionBase(0.375, 2));
-            Assert.Equal("14141414141414141414141414141414141414141414141414", NumberPrototype.ToFractionBase(0.375, 5));
+            Assert.Equal("011", NumberPrototype.ToFractionBase(0.375m, 2));
+            Assert.Equal("14141414141414141414141414141414141414141414141414", NumberPrototype.ToFractionBase(0.375m, 5));
         }
 
         [Fact]
@@ -909,10 +909,10 @@ namespace Jint.Tests.Runtime
             var engine = new Engine();
 
             var result = engine.Execute("1.2 + 2.1").GetCompletionValue().AsNumber();
-            Assert.Equal(3.3d, result);
+            Assert.Equal(3.3m, result);
 
             result = engine.Execute("JSON.parse('{\"x\" : 3.3}').x").GetCompletionValue().AsNumber();
-            Assert.Equal(3.3d, result);
+            Assert.Equal(3.3m, result);
         }
 
         [Fact]

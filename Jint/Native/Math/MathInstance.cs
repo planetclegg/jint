@@ -53,39 +53,39 @@ namespace Jint.Native.Math
             FastAddProperty("sqrt", new ClrFunctionInstance(Engine, Sqrt), true, false, true);
             FastAddProperty("tan", new ClrFunctionInstance(Engine, Tan), true, false, true);
 
-            FastAddProperty("E", System.Math.E, false, false, false);
-            FastAddProperty("LN10", System.Math.Log(10), false, false, false);
-            FastAddProperty("LN2", System.Math.Log(2), false, false, false);
-            FastAddProperty("LOG2E", System.Math.Log(System.Math.E, 2), false, false, false);
-            FastAddProperty("LOG10E", System.Math.Log(System.Math.E, 10), false, false, false);
-            FastAddProperty("PI", System.Math.PI, false, false, false);
-            FastAddProperty("SQRT1_2", System.Math.Sqrt(0.5), false, false, false);
-            FastAddProperty("SQRT2", System.Math.Sqrt(2), false, false, false);
+			FastAddProperty("E", (Money)(decimal)System.Math.E, false, false, false);
+			FastAddProperty("LN10", (Money)(decimal)System.Math.Log(10), false, false, false);
+			FastAddProperty("LN2", (Money)(decimal)System.Math.Log(2), false, false, false);
+			FastAddProperty("LOG2E", (Money)(decimal)System.Math.Log(System.Math.E, 2), false, false, false);
+			FastAddProperty("LOG10E", (Money)(decimal)System.Math.Log(System.Math.E, 10), false, false, false);
+			FastAddProperty("PI", (Money)(decimal)System.Math.PI, false, false, false);
+			FastAddProperty("SQRT1_2",(Money)(decimal) System.Math.Sqrt(0.5), false, false, false);
+			FastAddProperty("SQRT2", (Money)(decimal)System.Math.Sqrt(2), false, false, false);
 
         }
 
         private static JsValue Abs(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Abs(x);
+            return Money.Abs(x);
         }
 
         private static JsValue Acos(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Acos(x);
+			return (Money)(decimal)System.Math.Acos(x.ToDouble());
         }
 
         private static JsValue Asin(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Asin(x);
+			return (Money)(decimal)System.Math.Asin(x.ToDouble());
         }
 
         private static JsValue Atan(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Atan(x);
+			return (Money)(decimal)System.Math.Atan(x.ToDouble());
         }
 
         private static JsValue Atan2(JsValue thisObject, JsValue[] arguments)
@@ -94,17 +94,17 @@ namespace Jint.Native.Math
             var x = TypeConverter.ToNumber(arguments.At(1));
 
             // If either x or y is NaN, the result is NaN.
-            if (double.IsNaN(x) || double.IsNaN(y))
+            if (Money.IsNaN(x) || Money.IsNaN(y))
             {
-                return double.NaN;
+                return Money.NaN;
             }
 
             if (y > 0 && x.Equals(0))
             {
-                return System.Math.PI/2;
+				return (Money)(decimal)(System.Math.PI/2);
             }
             
-            if (NumberInstance.IsPositiveZero(y))
+			if (NumberInstance.IsPositiveZero(y))
             {
                 // If y is +0 and x>0, the result is +0.
                 if (x > 0)
@@ -113,25 +113,25 @@ namespace Jint.Native.Math
                 }
 
                 // If y is +0 and x is +0, the result is +0.
-                if (NumberInstance.IsPositiveZero(x))
+				if (NumberInstance.IsPositiveZero(x))
                 {
                     return +0;
                 }
 
                 // If y is +0 and x is −0, the result is an implementation-dependent approximation to +π.
-                if (NumberInstance.IsNegativeZero(x))
+				if (NumberInstance.IsNegativeZero(x))
                 {
-                    return System.Math.PI;
+					return (Money)(decimal)System.Math.PI;
                 }
                 
                 // If y is +0 and x<0, the result is an implementation-dependent approximation to +π.
                 if (x < 0)
                 {
-                    return System.Math.PI;
+					return (Money)(decimal) System.Math.PI;
                 }
             }
 
-            if (NumberInstance.IsNegativeZero(y))
+			if (NumberInstance.IsNegativeZero(y))
             {
                 // If y is −0 and x>0, the result is −0.
                 if (x > 0)
@@ -140,21 +140,21 @@ namespace Jint.Native.Math
                 }
 
                 // If y is −0 and x is +0, the result is −0.
-                if (NumberInstance.IsPositiveZero(x))
+				if (NumberInstance.IsPositiveZero(x))
                 {
                     return -0;
                 }
 
                 // If y is −0 and x is −0, the result is an implementation-dependent approximation to −π.
-                if (NumberInstance.IsNegativeZero(x))
+				if (NumberInstance.IsNegativeZero(x))
                 {
-                    return -System.Math.PI;
+					return (Money)(decimal)-System.Math.PI;
                 }
 
                 // If y is −0 and x<0, the result is an implementation-dependent approximation to −π.
                 if (x < 0)
                 {
-                    return -System.Math.PI;
+					return (Money)(decimal)-System.Math.PI;
                 }
             }
 
@@ -162,121 +162,121 @@ namespace Jint.Native.Math
             // If y<0 and x is −0, the result is an implementation-dependent approximation to −π/2.
             if (y < 0 && x.Equals(0))
             {
-                return -System.Math.PI/2;
+				return (Money)(decimal)-System.Math.PI/2;
             }
 
             // If y>0 and y is finite and x is +∞, the result is +0.
-            if (y > 0 && !double.IsInfinity(y))
+            if (y > 0 && !Money.IsInfinity(y))
             {
-                if (double.IsPositiveInfinity(x))
+                if (Money.IsPositiveInfinity(x))
                 {
                     return +0;
                 }
 
                 // If y>0 and y is finite and x is −∞, the result if an implementation-dependent approximation to +π.
-                if (double.IsNegativeInfinity(x))
+                if (Money.IsNegativeInfinity(x))
                 {
-                    return System.Math.PI;
+					return (Money) (decimal)System.Math.PI;
                 }
             }
 
 
             // If y<0 and y is finite and x is +∞, the result is −0.
             // If y<0 and y is finite and x is −∞, the result is an implementation-dependent approximation to −π.
-            if (y < 0 && !double.IsInfinity(y))
+            if (y < 0 && !Money.IsInfinity(y))
             {
-                if (double.IsPositiveInfinity(x))
+                if (Money.IsPositiveInfinity(x))
                 {
                     return -0;
                 }
 
                 // If y>0 and y is finite and x is −∞, the result if an implementation-dependent approximation to +π.
-                if (double.IsNegativeInfinity(x))
+                if (Money.IsNegativeInfinity(x))
                 {
-                    return -System.Math.PI;
+					return (Money)(decimal)-System.Math.PI;
                 }
             }
             
             // If y is +∞ and x is finite, the result is an implementation-dependent approximation to +π/2.
-            if (double.IsPositiveInfinity(y) && !double.IsInfinity(x))
+            if (Money.IsPositiveInfinity(y) && !Money.IsInfinity(x))
             {
-                return System.Math.PI/2;
+				return (Money)(decimal)System.Math.PI/2;
             }
 
             // If y is −∞ and x is finite, the result is an implementation-dependent approximation to −π/2.
-            if (double.IsNegativeInfinity(y) && !double.IsInfinity(x))
+            if (Money.IsNegativeInfinity(y) && !Money.IsInfinity(x))
             {
-                return -System.Math.PI / 2;
+				return (Money)(decimal)-System.Math.PI / 2;
             }
 
             // If y is +∞ and x is +∞, the result is an implementation-dependent approximation to +π/4.
-            if (double.IsPositiveInfinity(y) && double.IsPositiveInfinity(x))
+            if (Money.IsPositiveInfinity(y) && Money.IsPositiveInfinity(x))
             {
-                return System.Math.PI/4;
+				return (Money)(decimal)System.Math.PI/4;
             }
             
             // If y is +∞ and x is −∞, the result is an implementation-dependent approximation to +3π/4.
-            if (double.IsPositiveInfinity(y) && double.IsNegativeInfinity(x))
+            if (Money.IsPositiveInfinity(y) && Money.IsNegativeInfinity(x))
             {
-                return 3 * System.Math.PI / 4;
+				return (Money)(decimal)(3 * System.Math.PI / 4);
             }
             
             // If y is −∞ and x is +∞, the result is an implementation-dependent approximation to −π/4.
-            if (double.IsNegativeInfinity(y) && double.IsPositiveInfinity(x))
+            if (Money.IsNegativeInfinity(y) && Money.IsPositiveInfinity(x))
             {
-                return -System.Math.PI / 4;
+				return (Money)(decimal)-System.Math.PI / 4;
             }
             
             // If y is −∞ and x is −∞, the result is an implementation-dependent approximation to −3π/4.
-            if (double.IsNegativeInfinity(y) && double.IsNegativeInfinity(x))
+            if (Money.IsNegativeInfinity(y) && Money.IsNegativeInfinity(x))
             {
-                return - 3 * System.Math.PI / 4;
+				return (Money)(decimal)(- 3 * System.Math.PI / 4);
             }
             
-            return System.Math.Atan2(y, x);
+			return (Money)(decimal)System.Math.Atan2(y.ToDouble(), x.ToDouble());
         }
 
         private static JsValue Ceil(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Ceiling(x);
+            return Money.Ceiling(x);
         }
 
         private static JsValue Cos(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Cos(x);
+			return (Money)(decimal)System.Math.Cos(x.ToDouble());
         }
 
         private static JsValue Exp(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Exp(x);
+			return (Money)(decimal)System.Math.Exp(x.ToDouble());
         }
 
         private static JsValue Floor(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Floor(x);
+            return Money.Floor(x);
         }
 
         private static JsValue Log(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Log(x);
+			return (Money)(decimal)System.Math.Log(x.ToDouble());
         }
 
         private static JsValue Max(JsValue thisObject, JsValue[] arguments)
         {
             if (arguments.Length == 0)
             {
-                return Double.NegativeInfinity;
+                return Money.NegativeInfinity;
             }
 
-            double max = TypeConverter.ToNumber(arguments.At(0));
+            Money max = TypeConverter.ToNumber(arguments.At(0));
             for (int i = 0; i < arguments.Length; i++)
             {
-                max = System.Math.Max(max, TypeConverter.ToNumber(arguments[i]));
+				max = Money.Max(max, TypeConverter.ToNumber(arguments[i]));
             }
             return max;
         }
@@ -285,13 +285,13 @@ namespace Jint.Native.Math
         {
             if (arguments.Length == 0)
             {
-                return Double.PositiveInfinity;
+                return Money.PositiveInfinity;
             }
 
-            double min = TypeConverter.ToNumber(arguments.At(0));
+            Money min = TypeConverter.ToNumber(arguments.At(0));
             for (int i = 0; i < arguments.Length; i++)
             {
-                min = System.Math.Min(min, TypeConverter.ToNumber(arguments[i]));
+                min = Money.Min(min, TypeConverter.ToNumber(arguments[i]));
             }
             return min;
         }
@@ -301,9 +301,9 @@ namespace Jint.Native.Math
             var x = TypeConverter.ToNumber(arguments.At(0));
             var y = TypeConverter.ToNumber(arguments.At(1));
 
-            if (double.IsNaN(y))
+            if (Money.IsNaN(y))
             {
-                return double.NaN;
+                return Money.NaN;
             }
 
             if (y.Equals(0))
@@ -311,50 +311,50 @@ namespace Jint.Native.Math
                 return 1;
             }
 
-            if (double.IsNaN(x) && !y.Equals(0))
+            if (Money.IsNaN(x) && !y.Equals(0))
             {
-                return double.NaN;
+                return Money.NaN;
             }
 
-            if (System.Math.Abs(x) > 1)
+            if (Money.Abs(x) > 1)
             {
-                if (double.IsPositiveInfinity(y))
+                if (Money.IsPositiveInfinity(y))
                 {
-                    return double.PositiveInfinity;
+                    return Money.PositiveInfinity;
                 }
 
-                if (double.IsNegativeInfinity(y))
+                if (Money.IsNegativeInfinity(y))
                 {
                     return +0;
                 }
             }
 
-            if (System.Math.Abs(x).Equals(1))
+            if (Money.Abs(x).Equals(1))
             {
-                if (double.IsInfinity(y))
+                if (Money.IsInfinity(y))
                 {
-                    return double.NaN;
+                    return Money.NaN;
                 }
             }
 
-            if (System.Math.Abs(x) < 1)
+            if (Money.Abs(x) < 1)
             {
-                if (double.IsPositiveInfinity(y))
+                if (Money.IsPositiveInfinity(y))
                 {
                     return 0;
                 }
 
-                if (double.IsNegativeInfinity(y))
+                if (Money.IsNegativeInfinity(y))
                 {
-                    return double.PositiveInfinity;
+                    return Money.PositiveInfinity;
                 }
             }
 
-            if (double.IsPositiveInfinity(x))
+            if (Money.IsPositiveInfinity(x))
             {
                 if (y > 0)
                 {
-                    return double.PositiveInfinity;
+                    return Money.PositiveInfinity;
                 }
 
                 if (y < 0)
@@ -363,21 +363,21 @@ namespace Jint.Native.Math
                 }
             }
 
-            if (double.IsNegativeInfinity(x))
+            if (Money.IsNegativeInfinity(x))
             {
                 if (y > 0)
                 {
-                    if (System.Math.Abs(y % 2).Equals(1))
+                    if (Money.Abs(y % 2).Equals(1))
                     {
-                        return double.NegativeInfinity;
+                        return Money.NegativeInfinity;
                     }
 
-                    return double.PositiveInfinity;
+                    return Money.PositiveInfinity;
                 }
 
                 if (y < 0)
                 {
-                    if (System.Math.Abs(y % 2).Equals(1))
+                    if (Money.Abs(y % 2).Equals(1))
                     {
                         return -0;
                     }
@@ -397,7 +397,7 @@ namespace Jint.Native.Math
                 // If x is +0 and y<0, the result is +∞.
                 if (y < 0)
                 {
-                    return double.PositiveInfinity;
+                    return Money.PositiveInfinity;
                 }
             }
 
@@ -407,7 +407,7 @@ namespace Jint.Native.Math
                 if (y > 0)
                 {
                     // If x is −0 and y>0 and y is an odd integer, the result is −0.
-                    if (System.Math.Abs(y % 2).Equals(1))
+                    if (Money.Abs(y % 2).Equals(1))
                     {
                         return -0;
                     }
@@ -419,35 +419,35 @@ namespace Jint.Native.Math
                 if (y < 0)
                 {
                     // If x is −0 and y<0 and y is an odd integer, the result is −∞.
-                    if (System.Math.Abs(y % 2).Equals(1))
+                    if (Money.Abs(y % 2).Equals(1))
                     {
-                        return double.NegativeInfinity;
+                        return Money.NegativeInfinity;
                     }
 
                     // If x is −0 and y<0 and y is not an odd integer, the result is +∞.
-                    return double.PositiveInfinity;
+                    return Money.PositiveInfinity;
                 }
             }
 
             // If x<0 and x is finite and y is finite and y is not an integer, the result is NaN.
-            if (x < 0 && !double.IsInfinity(x) && !double.IsInfinity(y) && !y.Equals((int)y))
+            if (x < 0 && !Money.IsInfinity(x) && !Money.IsInfinity(y) && !y.Equals((int)y))
             {
-                return double.NaN;
+                return Money.NaN;
             }
 
-            return System.Math.Pow(x, y);
+			return (Money)(decimal)System.Math.Pow(x.ToDouble(), y.ToDouble());
         }
 
         private static JsValue Random(JsValue thisObject, JsValue[] arguments)
         {
-            return _random.NextDouble();
+			return (Money)(decimal)_random.NextDouble();
         }
 
         private static JsValue Round(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            var round = System.Math.Round(x);
-            if (round.Equals(x - 0.5))
+            var round = Money.Round(x);
+            if (round.Equals(x - 0.5m))
             {
                 return round + 1;
             }
@@ -458,19 +458,19 @@ namespace Jint.Native.Math
         private static JsValue Sin(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Sin(x);
+			return (Money)(decimal)System.Math.Sin(x.ToDouble());
         }
 
         private static JsValue Sqrt(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Sqrt(x);
+			return (Money)(decimal)System.Math.Sqrt(x.ToDouble());
         }
 
         private static JsValue Tan(JsValue thisObject, JsValue[] arguments)
         {
             var x = TypeConverter.ToNumber(arguments.At(0));
-            return System.Math.Tan(x);
+			return (Money)(decimal)System.Math.Tan(x.ToDouble());
         }
 
 

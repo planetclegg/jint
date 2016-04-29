@@ -67,14 +67,14 @@ namespace Jint.Native.Array
             }
 
             var n = arguments.Length > 1 ? TypeConverter.ToInteger(arguments[1]) : len - 1;
-            double k;
+            Money k;
             if (n >= 0)
             {
-                k = System.Math.Min(n, len - 1); // min
+                k = Money.Min(n, len - 1); // min
             }
             else
             {
-                k = len - System.Math.Abs(n);
+                k = len - Money.Abs(n);
             }
             var searchElement = arguments.At(0);
             for (; k >= 0; k--)
@@ -328,14 +328,14 @@ namespace Jint.Native.Array
             {
                 return -1;
             }
-            double k;
+            Money k;
             if (n >= 0)
             {
                 k = n;
             }
             else
             {
-                k = len - System.Math.Abs(n);
+                k = len - Money.Abs(n);
                 if (k < 0)
                 {
                     k = 0;
@@ -373,14 +373,14 @@ namespace Jint.Native.Array
             uint actualStart;
             if (relativeStart < 0)
             {
-                actualStart = (uint)System.Math.Max(len + relativeStart, 0);
+                actualStart = (uint)Money.Max(len + relativeStart, 0);
             }
             else
             {
-                actualStart = (uint)System.Math.Min(relativeStart, len);
+                actualStart = (uint)Money.Min(relativeStart, len);
             }
 
-            var actualDeleteCount = System.Math.Min(System.Math.Max(TypeConverter.ToInteger(deleteCount), 0), len - actualStart);
+            var actualDeleteCount = Money.Min(Money.Max(TypeConverter.ToInteger(deleteCount), 0), len - actualStart);
             for (var k = 0; k < actualDeleteCount; k++)
             {
                 var from = (actualStart + k).ToString();
@@ -571,11 +571,11 @@ namespace Jint.Native.Array
             uint k;
             if (relativeStart < 0)
             {
-                k = (uint)System.Math.Max(len + relativeStart, 0);
+                k = (uint)Money.Max(len + relativeStart, 0);
             }
             else
             {
-                k = (uint)System.Math.Min(TypeConverter.ToInteger(start), len);
+                k = (uint)Money.Min(TypeConverter.ToInteger(start), len);
             }
 
             uint final;
@@ -585,14 +585,14 @@ namespace Jint.Native.Array
             }
             else
             {
-                double relativeEnd = TypeConverter.ToInteger(end);
+                Money relativeEnd = TypeConverter.ToInteger(end);
                 if (relativeEnd < 0)
                 {
-                    final = (uint)System.Math.Max(len + relativeEnd, 0);
+                    final = (uint)Money.Max(len + relativeEnd, 0);
                 }
                 else
                 {
-                    final = (uint)System.Math.Min(TypeConverter.ToInteger(relativeEnd), len);
+                    final = (uint)Money.Min(TypeConverter.ToInteger(relativeEnd), len);
                 }
             }
 
@@ -886,7 +886,7 @@ namespace Jint.Native.Array
             var lenVal = TypeConverter.ToNumber(o.Get("length"));
             
             // cast to double as we need to prevent an overflow
-            double n = TypeConverter.ToUint32(lenVal);
+            Money n = TypeConverter.ToUint32(lenVal);
             foreach (JsValue e in arguments)
             {
                 o.Put(TypeConverter.ToString(n), e, true);

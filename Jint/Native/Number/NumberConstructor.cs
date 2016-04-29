@@ -31,18 +31,18 @@ namespace Jint.Native.Number
 
         public void Configure()
         {
-            FastAddProperty("MAX_VALUE", double.MaxValue, false, false, false);
-            FastAddProperty("MIN_VALUE", double.Epsilon, false, false, false);
-            FastAddProperty("NaN", double.NaN, false, false, false);
-            FastAddProperty("NEGATIVE_INFINITY", double.NegativeInfinity, false, false, false);
-            FastAddProperty("POSITIVE_INFINITY", double.PositiveInfinity, false, false, false);
+            FastAddProperty("MAX_VALUE", Money.MaxValue, false, false, false);
+			FastAddProperty("MIN_VALUE", Money.MinValue, false, false, false);
+            FastAddProperty("NaN", Money.NaN, false, false, false);
+            FastAddProperty("NEGATIVE_INFINITY", Money.NegativeInfinity, false, false, false);
+            FastAddProperty("POSITIVE_INFINITY", Money.PositiveInfinity, false, false, false);
         }
 
         public override JsValue Call(JsValue thisObject, JsValue[] arguments)
         {
             if (arguments.Length == 0)
             {
-                return 0d;
+				return (Money) 0m;
             }
 
             return TypeConverter.ToNumber(arguments[0]);
@@ -60,7 +60,7 @@ namespace Jint.Native.Number
 
         public NumberPrototype PrototypeObject { get; private set; }
 
-        public NumberInstance Construct(double value)
+        public NumberInstance Construct(Money value)
         {
             var instance = new NumberInstance(Engine);
             instance.Prototype = PrototypeObject;

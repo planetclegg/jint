@@ -90,7 +90,7 @@ namespace Jint.Native.Date
                         if (!DateTime.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out result))
                         {
                             // unrecognized dates should return NaN (15.9.4.2)
-                            return double.NaN;
+                            return Money.NaN;
                         }
                     }
                 }
@@ -106,7 +106,7 @@ namespace Jint.Native.Date
 
         private JsValue Now(JsValue thisObj, JsValue[] arguments)
         {
-            return System.Math.Floor((DateTime.UtcNow - Epoch).TotalMilliseconds);
+			return Money.Floor((decimal)(DateTime.UtcNow - Epoch).TotalMilliseconds);
         }
 
         public override JsValue Call(JsValue thisObject, JsValue[] arguments)
@@ -141,7 +141,7 @@ namespace Jint.Native.Date
             }
         }
 
-        private double ConstructTimeValue(JsValue[] arguments, bool useUtc)
+        private Money ConstructTimeValue(JsValue[] arguments, bool useUtc)
         {
             if (arguments.Length < 2)
             {
@@ -158,13 +158,13 @@ namespace Jint.Native.Date
 
             for (int i = 2; i < arguments.Length; i++)
             {
-                if (double.IsNaN(TypeConverter.ToNumber(arguments[i])))
+                if (Money.IsNaN(TypeConverter.ToNumber(arguments[i])))
                 {
-                    return double.NaN;
+                    return Money.NaN;
                 }
             }
 
-            if ((!double.IsNaN(y)) && (0 <= TypeConverter.ToInteger(y)) && (TypeConverter.ToInteger(y) <= 99))
+            if ((!Money.IsNaN(y)) && (0 <= TypeConverter.ToInteger(y)) && (TypeConverter.ToInteger(y) <= 99))
             {
                 y += 1900;
             }
@@ -194,7 +194,7 @@ namespace Jint.Native.Date
             return instance;
         }
 
-        public DateInstance Construct(double time)
+        public DateInstance Construct(Money time)
         {
             var instance = new DateInstance(Engine)
                 {
@@ -206,22 +206,22 @@ namespace Jint.Native.Date
             return instance;
         }
 
-        public static double TimeClip(double time)
+        public static Money TimeClip(Money time)
         {
-            if (double.IsInfinity(time) || double.IsNaN(time))
+            if (Money.IsInfinity(time) || Money.IsNaN(time))
             {
-                return double.NaN;
+                return Money.NaN;
             }
 
-            if (System.Math.Abs(time) > 8640000000000000)
+            if (Money.Abs(time) > 8640000000000000)
             {
-                return double.NaN;
+                return Money.NaN;
             }
 
             return TypeConverter.ToInteger(time);
         }
 
-        public double FromDateTime(DateTime dt)
+        public Money FromDateTime(DateTime dt)
         {
             var convertToUtcAfter = (dt.Kind == DateTimeKind.Unspecified);
 
@@ -229,14 +229,14 @@ namespace Jint.Native.Date
                 ? dt.ToUniversalTime()
                 : DateTime.SpecifyKind(dt, DateTimeKind.Utc);
 
-            var result = (dateAsUtc - Epoch).TotalMilliseconds;
+			var result = (Money)(decimal)(dateAsUtc - Epoch).TotalMilliseconds;
 
             if (convertToUtcAfter)
             {
                 result = PrototypeObject.Utc(result);
             }
 
-            return System.Math.Floor(result);
+            return Money.Floor(result);
         }
     }
 }

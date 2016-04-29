@@ -221,7 +221,7 @@ namespace Jint
             return SetValue(name, new JsValue(value));
         }
 
-        public Engine SetValue(string name, double value)
+        public Engine SetValue(string name, decimal value)
         {
             return SetValue(name, new JsValue(value));
         }

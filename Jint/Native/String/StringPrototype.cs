@@ -163,9 +163,9 @@ namespace Jint.Native.String
         {
             var doubleVal = TypeConverter.ToInteger(numberVal);
             var intVal = (int) doubleVal;
-            if (double.IsPositiveInfinity(doubleVal))
+            if (Money.IsPositiveInfinity(doubleVal))
                 intVal = int.MaxValue;
-            else if (double.IsNegativeInfinity(doubleVal))
+            else if (Money.IsNegativeInfinity(doubleVal))
                 intVal = int.MinValue;
             else
                 intVal = (int) doubleVal;
@@ -180,12 +180,12 @@ namespace Jint.Native.String
             var start = TypeConverter.ToNumber(arguments.At(0));
             var end = TypeConverter.ToNumber(arguments.At(1));
 
-            if (double.IsNaN(start) || start < 0)
+            if (Money.IsNaN(start) || start < 0)
             {
                 start = 0;
             }
 
-            if (double.IsNaN(end) || end < 0)
+            if (Money.IsNaN(end) || end < 0)
             {
                 end = 0;
             }
@@ -207,11 +207,11 @@ namespace Jint.Native.String
             var s = TypeConverter.ToString(thisObj);
             var start = TypeConverter.ToInteger(arguments.At(0));
             var length = arguments.At(1) == JsValue.Undefined 
-                ? double.PositiveInfinity 
+                ? Money.PositiveInfinity 
                 : TypeConverter.ToInteger(arguments.At(1));
 
-            start = start >= 0 ? start : System.Math.Max(s.Length + start, 0);
-            length = System.Math.Min(System.Math.Max(length, 0), s.Length - start);
+            start = start >= 0 ? start : Money.Max(s.Length + start, 0);
+            length = Money.Min(Money.Max(length, 0), s.Length - start);
             if (length <= 0)
             {
                 return "";
@@ -575,7 +575,7 @@ namespace Jint.Native.String
             {
                 rx.Put("lastIndex", 0, false);
                 var a = Engine.Array.Construct(Arguments.Empty);
-                double previousLastIndex = 0;
+                Money previousLastIndex = 0;
                 var n = 0;
                 var lastMatch = true;
                 while (lastMatch)
@@ -624,16 +624,16 @@ namespace Jint.Native.String
 
             var s = TypeConverter.ToString(thisObj);
             var searchStr = TypeConverter.ToString(arguments.At(0));
-            double numPos = double.NaN;
+            Money numPos = Money.NaN;
             if (arguments.Length > 1 && arguments[1] != Undefined.Instance)
             {
                 numPos = TypeConverter.ToNumber(arguments[1]);
             }
 
-            var pos = double.IsNaN(numPos) ? double.PositiveInfinity : TypeConverter.ToInteger(numPos);
+            var pos = Money.IsNaN(numPos) ? Money.PositiveInfinity : TypeConverter.ToInteger(numPos);
 
             var len = s.Length;
-            var start = (int)System.Math.Min(System.Math.Max(pos, 0), len);
+            var start = (int)Money.Min(Money.Max(pos, 0), len);
             var searchLen = searchStr.Length;
 
             var i = start;
@@ -671,7 +671,7 @@ namespace Jint.Native.String
 
             var s = TypeConverter.ToString(thisObj);
             var searchStr = TypeConverter.ToString(arguments.At(0));
-            double pos = 0;
+            Money pos = 0;
             if (arguments.Length > 1 && arguments[1] != Undefined.Instance)
             {
                 pos = TypeConverter.ToInteger(arguments[1]);
@@ -713,9 +713,9 @@ namespace Jint.Native.String
             var position = (int)TypeConverter.ToInteger(pos);
             if (position < 0 || position >= s.Length)
             {
-                return double.NaN;
+                return Money.NaN;
             }
-            return s[position];
+			return (Money)(decimal)s[position];
         }
 
         private JsValue CharAt(JsValue thisObj, JsValue[] arguments)

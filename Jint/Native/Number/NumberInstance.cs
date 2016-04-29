@@ -34,7 +34,7 @@ namespace Jint.Native.Number
         public JsValue PrimitiveValue { get; set; }
 
         public static bool IsNegativeZero(double x)
-        {
+        {			
             return x == 0 && BitConverter.DoubleToInt64Bits(x) == NegativeZeroBits;
         }
 
@@ -43,5 +43,14 @@ namespace Jint.Native.Number
             return x == 0 && BitConverter.DoubleToInt64Bits(x) != NegativeZeroBits;
         }
 
+		public static bool IsPositiveZero(Money x)
+		{
+			return Money.IsPositiveZero(x);
+		}
+
+		public static bool IsNegativeZero(Money x)
+		{
+			return Money.IsNegativeZero(x);
+		}
     }
 }

@@ -515,13 +515,13 @@ namespace Jint.Native.Number.Dtoa
             return Grisu3(v, buffer);
         }
 
-        public static string NumberToString(double v)
+        public static string NumberToString(Money v)
         {
             var buffer = new FastDtoaBuilder();
-            return NumberToString(v, buffer) ? buffer.Format() : null;
+			return NumberToString(v, buffer) ? buffer.Format() : null;  // FIXME
         }
 
-        public static bool NumberToString(double v, FastDtoaBuilder buffer)
+        public static bool NumberToString(Money v, FastDtoaBuilder buffer)
         {
             buffer.Reset();
             if (v < 0)
@@ -529,7 +529,9 @@ namespace Jint.Native.Number.Dtoa
                 buffer.Append('-');
                 v = -v;
             }
-            return Dtoa(v, buffer);
+
+			System.Diagnostics.Debug.WriteLine("NumToString" + v);
+			return Dtoa(v.ToDouble(), buffer);  // FIXME
         }
     }
 }

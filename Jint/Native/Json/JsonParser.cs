@@ -790,7 +790,7 @@ namespace Jint.Native.Json
                 case Tokens.String:
                     return new JsValue((string)Lex().Value);
                 case Tokens.Number:
-                    return new JsValue((double)Lex().Value);
+                    return new JsValue((decimal)Lex().Value);
             }
             
             if (Match("["))

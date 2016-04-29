@@ -28,7 +28,7 @@ namespace Jint.Tests.Runtime
         public void GithubReadme1()
         {
             var square = new Engine()
-                .SetValue("x", 3)
+                .SetValue("x", (decimal)3)
                 .Execute("x * x")
                 .GetCompletionValue()
                 .ToObject();

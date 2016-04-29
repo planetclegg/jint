@@ -48,7 +48,7 @@ namespace Jint.Native.Number
 
             var m = TypeConverter.ToNumber(thisObject);
 
-            if (double.IsNaN(m))
+            if (Money.IsNaN(m))
             {
                 return "NaN";
             }
@@ -63,12 +63,12 @@ namespace Jint.Native.Number
                 return "-" + ToLocaleString(-m, arguments);
             }
 
-            if (double.IsPositiveInfinity(m) || m >= double.MaxValue)
+            if (Money.IsPositiveInfinity(m) || m >= Money.MaxValue)
             {
                 return "Infinity";
             }
 
-            if (double.IsNegativeInfinity(m) || m <= -double.MaxValue)
+            if (Money.IsNegativeInfinity(m) || m <= -Money.MaxValue)
             {
                 return "-Infinity";
             }
@@ -99,12 +99,13 @@ namespace Jint.Native.Number
 
             var x = TypeConverter.ToNumber(thisObj);
 
-            if (double.IsNaN(x))
+            if (Money.IsNaN(x))
             {
                 return "NaN";
             }
 
-            if (x >= Ten21)
+			// FIXME: wtf
+			if (x.ToDouble() >= Ten21)
             {
                 return ToNumberString(x);
             }
@@ -122,7 +123,7 @@ namespace Jint.Native.Number
 
             var x = TypeConverter.ToNumber(thisObj);
 
-            if (double.IsNaN(x))
+            if (Money.IsNaN(x))
             {
                 return "NaN";
             }
@@ -142,7 +143,7 @@ namespace Jint.Native.Number
 
             var p = TypeConverter.ToInteger(arguments.At(0));
 
-            if (double.IsInfinity(x) || double.IsNaN(x))
+            if (Money.IsInfinity(x) || Money.IsNaN(x))
             {
                 return TypeConverter.ToString(x);
             }
@@ -179,7 +180,7 @@ namespace Jint.Native.Number
 
             var x = TypeConverter.ToNumber(thisObject);
 
-            if (double.IsNaN(x))
+            if (Money.IsNaN(x))
             {
                 return "NaN";
             }
@@ -189,7 +190,7 @@ namespace Jint.Native.Number
                 return "0";
             }
 
-            if (double.IsPositiveInfinity(x) || x >= double.MaxValue)
+            if (Money.IsPositiveInfinity(x) || x >= Money.MaxValue)
             {
                 return "Infinity";
             }
@@ -235,7 +236,7 @@ namespace Jint.Native.Number
             return result.ToString();
         }
 
-        public static string ToFractionBase(double n, int radix)
+        public static string ToFractionBase(Money n, int radix)
         {
             // based on the repeated multiplication method
             // http://www.mathpath.org/concepts/Num/frac.htm
@@ -259,9 +260,9 @@ namespace Jint.Native.Number
             return result.ToString();
         }
 
-        public static string ToNumberString(double m) 
+        public static string ToNumberString(Money m) 
         {
-            if (double.IsNaN(m))
+            if (Money.IsNaN(m))
             {
                 return "NaN";
             }
@@ -271,7 +272,7 @@ namespace Jint.Native.Number
                 return "0";
             }
 
-            if (double.IsPositiveInfinity(m) || m >= double.MaxValue)
+            if (Money.IsPositiveInfinity(m) || m >= Money.MaxValue)
             {
                 return "Infinity";
             }
@@ -283,7 +284,8 @@ namespace Jint.Native.Number
 
             // V8 FastDtoa can't convert all numbers, so try it first but
             // fall back to old DToA in case it fails
-            var result = FastDtoa.NumberToString(m);
+            var result = 
+				FastDtoa.NumberToString(m);
             if (result != null)
             {
                 return result;
@@ -295,14 +297,15 @@ namespace Jint.Native.Number
             // 123.4 s=1234, k=4, n=3
             // 1234000 s = 1234, k=4, n=7
             string s = null;
-            var rFormat = m.ToString("r");
+			double f = m.ToDouble();
+            var rFormat = f.ToString("r");
             if (rFormat.IndexOf("e", StringComparison.OrdinalIgnoreCase) == -1)
             {
                 s = rFormat.Replace(".", "").TrimStart('0').TrimEnd('0');
             }
         
             const string format = "0.00000000000000000e0";
-            var parts = m.ToString(format, CultureInfo.InvariantCulture).Split('e');
+            var parts = f.ToString(format, CultureInfo.InvariantCulture).Split('e');
             if (s == null)
             {
                 s = parts[0].TrimEnd('0').Replace(".", "");

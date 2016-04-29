@@ -153,17 +153,17 @@ namespace Jint.Runtime
                 var lN = TypeConverter.ToNumber(lval);
                 var rN = TypeConverter.ToNumber(rval);
 
-                if (double.IsNaN(rN) || double.IsNaN(lN))
+                if (Money.IsNaN(rN) || Money.IsNaN(lN))
                 {
-                    return double.NaN;
+                    return Money.NaN;
                 }
 
-                if (double.IsInfinity(lN) && double.IsInfinity(rN))
+                if (Money.IsInfinity(lN) && Money.IsInfinity(rN))
                 {
-                    return double.NaN;
+                    return Money.NaN;
                 }
 
-                if (double.IsInfinity(lN) && rN.Equals(0))
+                if (Money.IsInfinity(lN) && rN.Equals(0))
                 {
                     if (NumberInstance.IsNegativeZero(rN))
                     {
@@ -175,17 +175,17 @@ namespace Jint.Runtime
 
                 if (lN.Equals(0) && rN.Equals(0))
                 {
-                    return double.NaN;
+                    return Money.NaN;
                 }
 
                 if (rN.Equals(0))
                 {
                     if (NumberInstance.IsNegativeZero(rN))
                     {
-                        return lN > 0 ? -double.PositiveInfinity : -double.NegativeInfinity;
+                        return lN > 0 ? -Money.PositiveInfinity : -Money.NegativeInfinity;
                     }
 
-                    return lN > 0 ? double.PositiveInfinity : double.NegativeInfinity;
+                    return lN > 0 ? Money.PositiveInfinity : Money.NegativeInfinity;
                 }
 
                 return lN/rN;
@@ -391,7 +391,7 @@ namespace Jint.Runtime
                     var nx = TypeConverter.ToNumber(x);
                     var ny = TypeConverter.ToNumber(y);
 
-                    if (double.IsNaN(nx) || double.IsNaN(ny))
+                    if (Money.IsNaN(nx) || Money.IsNaN(ny))
                     {
                         return false;
                     }
@@ -484,7 +484,7 @@ namespace Jint.Runtime
                 var nx = TypeConverter.ToNumber(x);
                 var ny = TypeConverter.ToNumber(y);
 
-                if (double.IsNaN(nx) || double.IsNaN(ny))
+                if (Money.IsNaN(nx) || Money.IsNaN(ny))
                 {
                     return false;
                 }
@@ -526,7 +526,7 @@ namespace Jint.Runtime
                 var nx = TypeConverter.ToNumber(x);
                 var ny = TypeConverter.ToNumber(y);
 
-                if (double.IsNaN(nx) && double.IsNaN(ny))
+                if (Money.IsNaN(nx) && Money.IsNaN(ny))
                 {
                     return true;
                 }
@@ -577,7 +577,7 @@ namespace Jint.Runtime
                 var nx = TypeConverter.ToNumber(px);
                 var ny = TypeConverter.ToNumber(py);
 
-                if (double.IsNaN(nx) || double.IsNaN(ny))
+                if (Money.IsNaN(nx) || Money.IsNaN(ny))
                 {
                     return Undefined.Instance;
                 }
@@ -587,22 +587,22 @@ namespace Jint.Runtime
                     return false;
                 }
 
-                if (double.IsPositiveInfinity(nx))
+                if (Money.IsPositiveInfinity(nx))
                 {
                     return false;
                 }
 
-                if (double.IsPositiveInfinity(ny))
+                if (Money.IsPositiveInfinity(ny))
                 {
                     return true;
                 }
 
-                if (double.IsNegativeInfinity(ny))
+                if (Money.IsNegativeInfinity(ny))
                 {
                     return false;
                 }
 
-                if (double.IsNegativeInfinity(nx))
+                if (Money.IsNegativeInfinity(nx))
                 {
                     return true;
                 }
@@ -1012,7 +1012,7 @@ namespace Jint.Runtime
                     
                 case UnaryOperator.Minus:
                     var n = TypeConverter.ToNumber(_engine.GetValue(value));
-                    return double.IsNaN(n) ? double.NaN : n*-1;
+                    return Money.IsNaN(n) ? Money.NaN : n*-1;
                 
                 case UnaryOperator.BitwiseNot:
                     return ~TypeConverter.ToInt32(_engine.GetValue(value));

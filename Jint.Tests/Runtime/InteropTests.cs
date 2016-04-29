@@ -33,7 +33,7 @@ namespace Jint.Tests.Runtime
         [Fact]
         public void PrimitiveTypesCanBeSet()
         {
-            _engine.SetValue("x", 10);
+            _engine.SetValue("x",(decimal) 10);
             _engine.SetValue("y", true);
             _engine.SetValue("z", "foo");
 
@@ -993,8 +993,8 @@ namespace Jint.Tests.Runtime
         [Fact]
         public void CanOverwriteValues()
         {
-            _engine.SetValue("x", 3);
-            _engine.SetValue("x", 4);
+            _engine.SetValue("x", (decimal)3);
+            _engine.SetValue("x", (decimal)4);
 
             RunTest(@"
                 assert(x === 4);

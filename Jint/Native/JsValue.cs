@@ -26,29 +26,29 @@ namespace Jint.Native
 
         public JsValue(bool value)
         {
-            _double = value ? 1.0 : 0.0;
+            _money = value ? 1.0m : 0.0m;
             _object = null;
             _type = Types.Boolean;
         }
 
-        public JsValue(double value)
+        public JsValue(Money value)
         {
             _object = null;
             _type = Types.Number;
 
-            _double = value;
+            _money = value;
         }
 
         public JsValue(string value)
         {
-            _double = double.NaN;
+            _money = Money.NaN;
             _object = value;
             _type = Types.String;
         }
 
         public JsValue(ObjectInstance value)
         {
-            _double = double.NaN;
+            _money = Money.NaN;
             _type = Types.Object;
 
             _object = value;
@@ -56,12 +56,12 @@ namespace Jint.Native
 
         private JsValue(Types type)
         {
-            _double = double.NaN;
+            _money = Money.NaN;
             _object = null;
             _type = type;
         }
 
-        private readonly double _double;
+        private readonly Money _money;
 
         private readonly object _object;
 
@@ -210,7 +210,7 @@ namespace Jint.Native
                 throw new ArgumentException("The value is not a boolean");
             }
 
-            return _double != 0;
+            return _money != 0;
         }
 
         [Pure]
@@ -230,14 +230,14 @@ namespace Jint.Native
         }
 
         [Pure]
-        public double AsNumber()
+        public Money AsNumber()
         {
             if (_type != Types.Number)
             {
                 throw new ArgumentException("The value is not a number");
             }
 
-            return _double;
+            return _money;
         }
 
         public bool Equals(JsValue other)
@@ -257,7 +257,7 @@ namespace Jint.Native
                     return true;
                 case Types.Boolean:
                 case Types.Number:
-                    return _double == other._double;
+                    return _money == other._money;
                 case Types.String:
                 case Types.Object:
                     return _object == other._object;
@@ -305,9 +305,9 @@ namespace Jint.Native
                 case TypeCode.DateTime:
                     return engine.Date.Construct((DateTime)value);
                 case TypeCode.Decimal:
-                    return new JsValue((double)(decimal)value);
+                    return new JsValue((Money)(decimal)value);
                 case TypeCode.Double:
-                    return new JsValue((double)value);
+					return new JsValue(Money.FromDouble((double)value));
                 case TypeCode.Int16:
                     return new JsValue((Int16)value);
                 case TypeCode.Int32:
@@ -317,7 +317,7 @@ namespace Jint.Native
                 case TypeCode.SByte:
                     return new JsValue((SByte)value);
                 case TypeCode.Single:
-                    return new JsValue((Single)value);
+					return new JsValue(Money.FromDouble((Single)value));
                 case TypeCode.String:
                     return new JsValue((string)value);
                 case TypeCode.UInt16:
@@ -402,9 +402,9 @@ namespace Jint.Native
                 case Types.String:
                     return _object;
                 case Types.Boolean:
-                    return _double != 0;
+                    return _money != 0;
                 case Types.Number:
-                    return _double;
+                    return _money;
                 case Types.Object:
                     var wrapper = _object as IObjectWrapper;
                     if (wrapper != null)
@@ -558,9 +558,9 @@ namespace Jint.Native
                 case Types.Null:
                     return "null";
                 case Types.Boolean:
-                    return _double != 0 ? bool.TrueString : bool.FalseString;
+                    return _money != 0 ? bool.TrueString : bool.FalseString;
                 case Types.Number:
-                    return _double.ToString();
+                    return _money.ToString();
                 case Types.String:
                 case Types.Object:
                     return _object.ToString();
@@ -579,10 +579,19 @@ namespace Jint.Native
             return !a.Equals(b);
         }
 
-        static public implicit operator JsValue(double value)
+        static public implicit operator JsValue(Money value)
         {
             return new JsValue(value);
         }
+
+		static public implicit operator JsValue(int value)
+		{
+			return new JsValue(value);
+		}
+		static public implicit operator JsValue(uint value)
+		{
+			return new JsValue(value);
+		}
 
         static public implicit operator JsValue(bool value)
         {
@@ -645,7 +654,7 @@ namespace Jint.Native
             unchecked
             {
                 var hashCode = 0;
-                hashCode = (hashCode * 397) ^ _double.GetHashCode();
+                hashCode = (hashCode * 397) ^ _money.GetHashCode();
                 hashCode = (hashCode * 397) ^ (_object != null ? _object.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (int)_type;
                 return hashCode;

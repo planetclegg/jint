@@ -31,7 +31,7 @@ namespace Jint.Native.String
 
         public JsValue PrimitiveValue { get; set; }
 
-        private static bool IsInt(double d)
+        private static bool IsInt(Money d)
         {
             if (d >= long.MinValue && d <= long.MaxValue)
             {
@@ -53,7 +53,7 @@ namespace Jint.Native.String
                 return desc;
             }
 
-            if (propertyName != System.Math.Abs(TypeConverter.ToInteger(propertyName)).ToString())
+            if (propertyName != Money.Abs(TypeConverter.ToInteger(propertyName)).ToString())
             {
                 return PropertyDescriptor.Undefined;
             }

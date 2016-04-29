@@ -95,7 +95,7 @@ namespace Jint.Native.Json
             if (space.IsNumber())
             {
                 if (space.AsNumber() > 0) {
-                    _gap = new System.String(' ', (int)System.Math.Min(10, space.AsNumber()));
+                    _gap = new System.String(' ', (int)Money.Min(10, space.AsNumber()));
                 }
                 else 
                 {

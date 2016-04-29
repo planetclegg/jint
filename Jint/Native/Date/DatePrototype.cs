@@ -656,8 +656,9 @@ namespace Jint.Native.Date
                 return Money.NaN;
             }
 
-            Money upper = Money.MaxValue;
-            Money lower = Money.MinValue;
+            // FIXME: JEC hack to fix overflows in date calculations.. dubious
+            Money upper = Money.MaxValue / (MsPerDay * 365 * 2);
+            Money lower = Money.MinValue / (MsPerDay * 365 * 2);
             while (upper > lower + 1)
             {
                 var current = Money.Floor((upper + lower) / 2);

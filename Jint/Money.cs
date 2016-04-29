@@ -137,13 +137,18 @@ namespace Jint
 		{
 			if (Money.IsNaN(x) || Money.IsNaN(y))
 				return Money.NaN;
+            if (y._value == 0m)
+                return Money.NaN;
 			return x._value / y._value;
 		}
 		public static Money operator %(Money x, Money y)
 		{
 			if (Money.IsNaN(x) || Money.IsNaN(y))
-				return Money.NaN;
-			return x._value % y._value;
+				return Money.NaN;        
+            if (y._value == 0m)
+                return Money.NaN;
+
+            return x._value % y._value;
 		}
 
 

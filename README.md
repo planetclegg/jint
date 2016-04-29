@@ -13,7 +13,7 @@ How come all math expression libs seem to assume you want doubles (either exclus
 ##Why *NOT* to do this?
 It's a bit broken version of JS.  Its nowhere near spec for JS.   I haven't bothered to see how many tests fail.   *Some* transcendental functions (sin, cos,  etc) still sorta work, but return slightly different values (due to me taking the shortcut of converting from decimals to doubles and back).   Worse, since C# decimals don't have a notion of NaN, PositiveInfinity, NegativeInfinity, or positive vs negative zero (not sure?), various transcendental functions are broken for lots of values.   Scientific notation probably doesn't work right either, i didn't really fully explore that.   Really, most of the transcendental functions should be ripped out, and for financial calculations they aren't necessary anyway.  I probably screwed up date functions in the process.
 
-Date functions are horribly broken due to math overflows, which I didn't expect.  This has broken almost all the unit tests
+~~Date functions are horribly broken due to math overflows, which I didn't expect.  This has broken almost all the unit tests~~ *Update: Fixed overflows, but fix is a little dubious. Unbroke over 6000 unit tests with a few tweaks here and there*
 
 However, standard arithmetic functions (+,-,*,/) for financial calculations should operate as expected for *decimal* types (no rounding nastyness).
 
@@ -30,7 +30,7 @@ After about 4 hours of hacking at it, I created a frankenstein monster.  Left to
 - figure out why the date calculations are overflowing, I think I've traced that to YearFromTime(), which works in an odd way
 - Fix any remaining bugs (Particularly, conversions to and from string are kludged right now and probably dubious for some edge cases)
 - eliminate all the NaN special handling and migrate from the Money wrapper directly to decimal
-- Fix Unit tests (oh the humanity!), or removes ones that no longer apply. Almost all fail now due to a date function problem.
+- Fix Unit tests (oh the humanity!), or removes ones that no longer apply. About 218 still fail, many related to missing concept of infinity, others may be more easily fixable
 - Call it something other than Javascript
 - Kill it with fire, mercifully
 

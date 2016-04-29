@@ -223,7 +223,8 @@ namespace Jint.Runtime
         /// <returns></returns>
         public static int ToInt32(JsValue o)
         {
-            return (int)(uint)ToNumber(o);
+            // JEC: added long to head off SOME overflows
+            return (int)(uint) (long)ToNumber(o);
         }
 
         /// <summary>
